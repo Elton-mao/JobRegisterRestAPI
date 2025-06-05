@@ -29,7 +29,7 @@ public class SkillAssembler implements SimpleRepresentationModelAssembler<SkillR
 
     @Override
     public void addLinks(CollectionModel<EntityModel<SkillReSponse>> resources) {
-        var selfLink = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(SkillRestController.class).findAll())
+        var selfLink = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(SkillRestController.class).findAll(null))
         .withSelfRel()
         .withType("GET");
 

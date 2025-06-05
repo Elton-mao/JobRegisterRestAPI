@@ -1,7 +1,8 @@
 package com.estudoapi.estudoapi.api.Skills.controllers;
 
-
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
@@ -35,24 +36,21 @@ public class SkillRestController {
     private final SkillMapper skillMapper;
     private final SkillRepository skillRepository;
     private final SkillAssembler skillAssembler;
+    private final PagedResourcesAssembler<SkillReSponse> pagedResourcesAssembler;
 
     @GetMapping
-    public CollectionModel<EntityModel<SkillReSponse>> findAll() {
-        var skills = skillRepository.findAll()
-                .stream()
-                .map(skillMapper::toSkillResponse)
-                .toList();
-        return  skillAssembler.toCollectionModel(skills); 
-       
-
+    public CollectionModel<EntityModel<SkillReSponse>> findAll(Pageable pageable) {
+        var skills = skillRepository.findAll(pageable)
+                .map(skillMapper::toSkillResponse);
+        return pagedResourcesAssembler.toModel(skills, skillAssembler);
     }
 
     @GetMapping("/{id}")
     public EntityModel<SkillReSponse> findById(@PathVariable Long id) {
-       var skill = skillRepository.findById(id)
+        var skill = skillRepository.findById(id)
                 .map(skillMapper::toSkillResponse)
                 .orElseThrow(() -> new SkillNotFoundException());
-                return skillAssembler.toModel(skill);    
+        return skillAssembler.toModel(skill);
     }
 
     @PostMapping
